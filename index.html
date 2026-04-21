@@ -7,7 +7,7 @@
 
 <script>
 window.APP_CONFIG = {
-  PIXEL_ID: '2345255902635762',
+  PIXEL_IDS: ['2345255902635762', '1294542409468503'],
   LINE_URL: 'https://line.me/R/ti/p/@890wedkv',
   REDIRECT_DELAY: 800
 };
@@ -29,8 +29,13 @@ window.APP_CONFIG = {
   s.parentNode.insertBefore(t,s);
 }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
 
-fbq('init', window.APP_CONFIG.PIXEL_ID);
-fbq('track', 'PageView');
+window.APP_CONFIG.PIXEL_IDS.forEach(function(pixelId){
+  fbq('init', pixelId);
+});
+
+window.APP_CONFIG.PIXEL_IDS.forEach(function(pixelId){
+  fbq('trackSingle', pixelId, 'PageView');
+});
 </script>
 
 <noscript>
@@ -40,6 +45,13 @@ fbq('track', 'PageView');
     style="display:none"
     alt=""
     src="https://www.facebook.com/tr?id=2345255902635762&ev=PageView&noscript=1"
+  />
+  <img
+    height="1"
+    width="1"
+    style="display:none"
+    alt=""
+    src="https://www.facebook.com/tr?id=1294542409468503&ev=PageView&noscript=1"
   />
 </noscript>
 
@@ -82,7 +94,7 @@ body{margin:0;background:#000;font-family:system-ui,-apple-system,"PingFang TC",
 
 <script>
 (function(){
-  var PIXEL_ID = window.APP_CONFIG.PIXEL_ID;
+  var PIXEL_IDS = window.APP_CONFIG.PIXEL_IDS;
   var LINE_URL = window.APP_CONFIG.LINE_URL;
   var REDIRECT_DELAY = window.APP_CONFIG.REDIRECT_DELAY;
 
@@ -119,18 +131,22 @@ body{margin:0;background:#000;font-family:system-ui,-apple-system,"PingFang TC",
     window.location.href = LINE_URL;
   }
 
-  function sendTrack(eventName, params, options){
+  function sendTrackToAll(eventName, params, options){
     try{
       if (typeof fbq === 'function') {
-        fbq('track', eventName, params, options);
+        PIXEL_IDS.forEach(function(pixelId){
+          fbq('trackSingle', pixelId, eventName, params, options);
+        });
       }
     }catch(e){}
   }
 
-  function sendTrackCustom(eventName, params, options){
+  function sendTrackCustomToAll(eventName, params, options){
     try{
       if (typeof fbq === 'function') {
-        fbq('trackCustom', eventName, params, options);
+        PIXEL_IDS.forEach(function(pixelId){
+          fbq('trackSingleCustom', pixelId, eventName, params, options);
+        });
       }
     }catch(e){}
   }
@@ -152,8 +168,8 @@ body{margin:0;background:#000;font-family:system-ui,-apple-system,"PingFang TC",
       contact_method: 'line'
     };
 
-    sendTrack('Contact', contactParams, { eventID: eventId });
-    sendTrackCustom('LineClick', customParams, { eventID: eventId });
+    sendTrackToAll('Contact', contactParams, { eventID: eventId });
+    sendTrackCustomToAll('LineClick', customParams, { eventID: eventId });
   }
 
   window.addEventListener('pageshow', function(event){
