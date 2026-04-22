@@ -7,7 +7,7 @@
 
 <script>
 window.APP_CONFIG = {
-  PIXEL_IDS: ['2345255902635762', '1294542409468503'],
+  PIXEL_ID: '1294542409468503',
   LINE_URL: 'https://line.me/R/ti/p/@890wedkv',
   REDIRECT_DELAY: 800
 };
@@ -29,23 +29,11 @@ window.APP_CONFIG = {
   s.parentNode.insertBefore(t,s);
 }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
 
-window.APP_CONFIG.PIXEL_IDS.forEach(function(pixelId){
-  fbq('init', pixelId);
-});
-
-window.APP_CONFIG.PIXEL_IDS.forEach(function(pixelId){
-  fbq('trackSingle', pixelId, 'PageView');
-});
+fbq('init', window.APP_CONFIG.PIXEL_ID);
+fbq('track', 'PageView');
 </script>
 
 <noscript>
-  <img
-    height="1"
-    width="1"
-    style="display:none"
-    alt=""
-    src="https://www.facebook.com/tr?id=2345255902635762&ev=PageView&noscript=1"
-  />
   <img
     height="1"
     width="1"
@@ -94,7 +82,7 @@ body{margin:0;background:#000;font-family:system-ui,-apple-system,"PingFang TC",
 
 <script>
 (function(){
-  var PIXEL_IDS = window.APP_CONFIG.PIXEL_IDS;
+  var PIXEL_ID = window.APP_CONFIG.PIXEL_ID;
   var LINE_URL = window.APP_CONFIG.LINE_URL;
   var REDIRECT_DELAY = window.APP_CONFIG.REDIRECT_DELAY;
 
@@ -131,22 +119,18 @@ body{margin:0;background:#000;font-family:system-ui,-apple-system,"PingFang TC",
     window.location.href = LINE_URL;
   }
 
-  function sendTrackToAll(eventName, params, options){
+  function sendTrack(eventName, params, options){
     try{
       if (typeof fbq === 'function') {
-        PIXEL_IDS.forEach(function(pixelId){
-          fbq('trackSingle', pixelId, eventName, params, options);
-        });
+        fbq('track', eventName, params, options);
       }
     }catch(e){}
   }
 
-  function sendTrackCustomToAll(eventName, params, options){
+  function sendTrackCustom(eventName, params, options){
     try{
       if (typeof fbq === 'function') {
-        PIXEL_IDS.forEach(function(pixelId){
-          fbq('trackSingleCustom', pixelId, eventName, params, options);
-        });
+        fbq('trackCustom', eventName, params, options);
       }
     }catch(e){}
   }
@@ -168,8 +152,8 @@ body{margin:0;background:#000;font-family:system-ui,-apple-system,"PingFang TC",
       contact_method: 'line'
     };
 
-    sendTrackToAll('Contact', contactParams, { eventID: eventId });
-    sendTrackCustomToAll('LineClick', customParams, { eventID: eventId });
+    sendTrack('Contact', contactParams, { eventID: eventId });
+    sendTrackCustom('LineClick', customParams, { eventID: eventId });
   }
 
   window.addEventListener('pageshow', function(event){
