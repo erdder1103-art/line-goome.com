@@ -7,10 +7,7 @@
 
 <script>
 window.APP_CONFIG = {
-  PIXEL_IDS: [
-    '1706078477067217',
-    '1294542409468503'
-  ],
+  PIXEL_ID: '1706078477067217',
   LINE_URL: 'https://line.me/R/ti/p/@890wedkv',
   REDIRECT_DELAY: 800
 };
@@ -32,18 +29,13 @@ window.APP_CONFIG = {
   s.parentNode.insertBefore(t,s);
 }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
 
-window.APP_CONFIG.PIXEL_IDS.forEach(function(pixelId){
-  fbq('init', pixelId);
-});
-
+fbq('init', window.APP_CONFIG.PIXEL_ID);
 fbq('track', 'PageView');
 </script>
 
 <noscript>
   <img height="1" width="1" style="display:none" alt=""
-    src="https://www.facebook.com/tr?id=2345255902635762&ev=PageView&noscript=1"/>
-  <img height="1" width="1" style="display:none" alt=""
-    src="https://www.facebook.com/tr?id=1294542409468503&ev=PageView&noscript=1"/>
+    src="https://www.facebook.com/tr?id=1706078477067217&ev=PageView&noscript=1"/>
 </noscript>
 
 <style>
