@@ -7,7 +7,10 @@
 
 <script>
 window.APP_CONFIG = {
-  PIXEL_ID: '1294542409468503',
+  PIXEL_IDS: [
+    '2345255902635762',
+    '1294542409468503'
+  ],
   LINE_URL: 'https://line.me/R/ti/p/@890wedkv',
   REDIRECT_DELAY: 800
 };
@@ -29,18 +32,18 @@ window.APP_CONFIG = {
   s.parentNode.insertBefore(t,s);
 }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
 
-fbq('init', window.APP_CONFIG.PIXEL_ID);
+window.APP_CONFIG.PIXEL_IDS.forEach(function(pixelId){
+  fbq('init', pixelId);
+});
+
 fbq('track', 'PageView');
 </script>
 
 <noscript>
-  <img
-    height="1"
-    width="1"
-    style="display:none"
-    alt=""
-    src="https://www.facebook.com/tr?id=1294542409468503&ev=PageView&noscript=1"
-  />
+  <img height="1" width="1" style="display:none" alt=""
+    src="https://www.facebook.com/tr?id=2345255902635762&ev=PageView&noscript=1"/>
+  <img height="1" width="1" style="display:none" alt=""
+    src="https://www.facebook.com/tr?id=1294542409468503&ev=PageView&noscript=1"/>
 </noscript>
 
 <style>
@@ -67,13 +70,7 @@ body{margin:0;background:#000;font-family:system-ui,-apple-system,"PingFang TC",
     <img src="assets/ip.png" class="ip" alt="" loading="eager">
 
     <div class="btnWrapper">
-      <a
-        href="https://line.me/R/ti/p/@890wedkv"
-        class="goLine"
-        data-area="main_cta"
-        rel="noopener"
-        aria-label="加入官方LINE"
-      >
+      <a href="https://line.me/R/ti/p/@890wedkv" class="goLine" data-area="main_cta" rel="noopener" aria-label="加入官方LINE">
         <img src="assets/btn.png" class="btn" alt="加入官方LINE" loading="eager">
       </a>
     </div>
@@ -82,7 +79,6 @@ body{margin:0;background:#000;font-family:system-ui,-apple-system,"PingFang TC",
 
 <script>
 (function(){
-  var PIXEL_ID = window.APP_CONFIG.PIXEL_ID;
   var LINE_URL = window.APP_CONFIG.LINE_URL;
   var REDIRECT_DELAY = window.APP_CONFIG.REDIRECT_DELAY;
 
@@ -92,15 +88,18 @@ body{margin:0;background:#000;font-family:system-ui,-apple-system,"PingFang TC",
   var clicked = false;
   var redirectTimer = null;
 
-  function createEventId(){
+  function createEventId(prefix){
+    var id = '';
     if (window.crypto && typeof window.crypto.randomUUID === 'function') {
-      return window.crypto.randomUUID();
+      id = window.crypto.randomUUID();
+    } else {
+      id = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){
+        var r = Math.random()*16|0;
+        var v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
     }
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){
-      var r = Math.random()*16|0;
-      var v = c === 'x' ? r : (r & 0x3 | 0x8);
-      return v.toString(16);
-    });
+    return prefix + '_' + id;
   }
 
   function resetState(){
@@ -119,41 +118,24 @@ body{margin:0;background:#000;font-family:system-ui,-apple-system,"PingFang TC",
     window.location.href = LINE_URL;
   }
 
-  function sendTrack(eventName, params, options){
-    try{
-      if (typeof fbq === 'function') {
-        fbq('track', eventName, params, options);
-      }
-    }catch(e){}
-  }
-
-  function sendTrackCustom(eventName, params, options){
-    try{
-      if (typeof fbq === 'function') {
-        fbq('trackCustom', eventName, params, options);
-      }
-    }catch(e){}
-  }
-
   function fireEvents(area){
-    var eventId = createEventId();
+    var baseArea = area || 'main_cta';
 
-    var contactParams = {
+    var params = {
       content_name: 'line_contact_click',
       content_category: 'line_redirect',
       contact_method: 'line',
-      click_area: area || 'main_cta',
+      click_area: baseArea,
       destination: 'official_line'
     };
 
-    var customParams = {
-      click_area: area || 'main_cta',
-      destination: 'official_line',
-      contact_method: 'line'
-    };
-
-    sendTrack('Contact', contactParams, { eventID: eventId });
-    sendTrackCustom('LineClick', customParams, { eventID: eventId });
+    try {
+      if (typeof fbq === 'function') {
+        fbq('track', 'Contact', params, { eventID: createEventId('contact') });
+        fbq('track', 'Lead', params, { eventID: createEventId('lead') });
+        fbq('trackCustom', 'LineClick', params, { eventID: createEventId('lineclick') });
+      }
+    } catch(e) {}
   }
 
   window.addEventListener('pageshow', function(event){
@@ -175,8 +157,7 @@ body{margin:0;background:#000;font-family:system-ui,-apple-system,"PingFang TC",
         x.classList.add('is-disabled');
       });
 
-      var area = a.getAttribute('data-area') || 'main_cta';
-      fireEvents(area);
+      fireEvents(a.getAttribute('data-area') || 'main_cta');
 
       redirectTimer = setTimeout(go, REDIRECT_DELAY);
     }, { passive:false });
